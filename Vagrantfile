@@ -116,9 +116,9 @@ Vagrant.configure("2") do |config|
         vb_loadbalancer.memory = loadbalancer_mem
         vb_loadbalancer.customize ["modifyvm", :id, "--cableconnected1", "on"]
       end
-      loadbalancer.vm.network "private_network", ip: "192.168.20.#{loadbalancers}"
+      loadbalancer.vm.network "private_network", ip: "192.168.20.#{loadbalancers + 4}"
       loadbalancer.vm.hostname = loadbalancer_name
-      loadbalancer.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{loadbalancers} k8s-loadbalancer-#{loadbalancers}/' -i /etc/hosts"
+      loadbalancer.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{loadbalancers + 4} k8s-loadbalancer-#{loadbalancers}/' -i /etc/hosts"
       loadbalancer.vm.provision "shell", path: "./scripts/install-loadbalancer.sh"
     end
   end
