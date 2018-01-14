@@ -20,25 +20,25 @@ ENV['VAGRANT_DEFAULT_PROVIDER'] = 'virtualbox'
   loadbalancer_mem = ENV['LOADBALANCER_MEM'].to_i
 
   puts " "
-  puts "Etcd _____________"
-  puts "   - Nodes  : #{etcd_c}"
-  puts "   - CPU    : #{etcd_cpu}"
-  puts "   - Memory : #{etcd_mem}"
+  puts "__Etcd ___________"
+  puts "| - Nodes  : #{etcd_c}"
+  puts "| - CPU    : #{etcd_cpu}"
+  puts "| - Memory : #{etcd_mem}"
   puts " "
-  puts "Masters __________"
-  puts "   - Nodes  : #{master_c}"
-  puts "   - CPU    : #{master_cpu}"
-  puts "   - Memory : #{master_mem}"
+  puts "__Masters ________"
+  puts "| - Nodes  : #{master_c}"
+  puts "| - CPU    : #{master_cpu}"
+  puts "| - Memory : #{master_mem}"
   puts " "
-  puts "Workers __________"
-  puts "   - Nodes  : #{worker_c}"
-  puts "   - CPU    : #{worker_cpu}"
-  puts "   - Memory : #{worker_mem}"
+  puts "__Workers ________"
+  puts "| - Nodes  : #{worker_c}"
+  puts "| - CPU    : #{worker_cpu}"
+  puts "| - Memory : #{worker_mem}"
   puts " "
-  puts "Loadbalancers ____"
-  puts "   - Nodes  : #{loadbalancer_c}"
-  puts "   - CPU    : #{loadbalancer_cpu}"
-  puts "   - Memory : #{loadbalancer_mem}"
+  puts "__Loadbalancers __"
+  puts "| - Nodes  : #{loadbalancer_c}"
+  puts "| - CPU    : #{loadbalancer_cpu}"
+  puts "| - Memory : #{loadbalancer_mem}"
   puts " "
 
 Vagrant.configure("2") do |config|
@@ -52,6 +52,7 @@ Vagrant.configure("2") do |config|
     etcd_name = "k8s-etcd-#{etcds}"
     config.vm.define etcd_name do |etcd|
       config.vm.provider "virtualbox" do |vb_etcd|
+        vb_etcd.name = "Etcd-#{etcds}"
         vb_etcd.cpus = etcd_cpu
         vb_etcd.gui = false
         vb_etcd.linked_clone = true
@@ -70,6 +71,7 @@ Vagrant.configure("2") do |config|
     master_name = "k8s-master-#{masters}"
     config.vm.define master_name do |master|
       config.vm.provider "virtualbox" do |vb_master|
+        vb_master.name = "Master-#{masters}"
         vb_master.cpus = master_cpu
         vb_master.gui = false
         vb_master.linked_clone = true
@@ -88,6 +90,7 @@ Vagrant.configure("2") do |config|
     worker_name = "k8s-worker-#{workers}"
     config.vm.define worker_name do |worker|
       config.vm.provider "virtualbox" do |vb_worker|
+        vb_worker.name = "Worker-#{workers}"
         vb_worker.cpus = worker_cpu
         vb_worker.gui = false
         vb_worker.linked_clone = true
@@ -106,13 +109,14 @@ Vagrant.configure("2") do |config|
     loadbalancer_name = "k8s-loadbalancer-#{loadbalancers}"
     config.vm.define loadbalancer_name do |loadbalancer|
       config.vm.provider "virtualbox" do |vb_loadbalancer|
+        vb_loadbalancer.name = "Loadbalancer-#{loadbalancers}"
         vb_loadbalancer.cpus = loadbalancer_cpu
         vb_loadbalancer.gui = false
         vb_loadbalancer.linked_clone = true
         vb_loadbalancer.memory = loadbalancer_mem
         vb_loadbalancer.customize ["modifyvm", :id, "--cableconnected1", "on"]
       end
-      loadbalancer.vm.network "private_network", ip: "192.168.20.#{loadbalancers + 30}"
+      loadbalancer.vm.network "private_network", ip: "192.168.20.#{loadbalancers}"
       loadbalancer.vm.hostname = loadbalancer_name
       loadbalancer.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{loadbalancers} k8s-loadbalancer-#{loadbalancers}/' -i /etc/hosts"
       loadbalancer.vm.provision "shell", path: "./scripts/install-loadbalancer.sh"
