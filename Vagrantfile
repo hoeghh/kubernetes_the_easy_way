@@ -41,7 +41,6 @@ ENV['VAGRANT_DEFAULT_PROVIDER'] = 'virtualbox'
   puts "   - Memory : #{loadbalancer_mem}"
   puts " "
 
-# Provitioning etcd nodes
 Vagrant.configure("2") do |config|
   config.vm.boot_timeout = 500
   config.vm.box = "bento/ubuntu-16.04"
@@ -83,6 +82,43 @@ Vagrant.configure("2") do |config|
       master.vm.provision "shell", path: "./scripts/install-master.sh"
     end
   end
+
+  # Provitioning WORKER nodes
+  (1 .. worker_c). each do |workers|
+    worker_name = "k8s-worker-#{workers}"
+    config.vm.define worker_name do |worker|
+      config.vm.provider "virtualbox" do |vb_worker|
+        vb_worker.cpus = worker_cpu
+        vb_worker.gui = false
+        vb_worker.linked_clone = true
+        vb_worker.memory = worker_mem
+        vb_worker.customize ["modifyvm", :id, "--cableconnected1", "on"]
+      end
+      worker.vm.network "private_network", ip: "192.168.20.#{workers + 30}"
+      worker.vm.hostname = worker_name
+      worker.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{workers + 30} k8s-worker-#{workers}/' -i /etc/hosts"
+      worker.vm.provision "shell", path: "./scripts/install-worker.sh"
+    end
+  end
+
+  # Provitioning LOADBALANCER nodes
+  (1 .. loadbalancer_c). each do |loadbalancers|
+    loadbalancer_name = "k8s-loadbalancer-#{loadbalancers}"
+    config.vm.define loadbalancer_name do |loadbalancer|
+      config.vm.provider "virtualbox" do |vb_loadbalancer|
+        vb_loadbalancer.cpus = loadbalancer_cpu
+        vb_loadbalancer.gui = false
+        vb_loadbalancer.linked_clone = true
+        vb_loadbalancer.memory = loadbalancer_mem
+        vb_loadbalancer.customize ["modifyvm", :id, "--cableconnected1", "on"]
+      end
+      loadbalancer.vm.network "private_network", ip: "192.168.20.#{loadbalancers + 30}"
+      loadbalancer.vm.hostname = loadbalancer_name
+      loadbalancer.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{loadbalancers} k8s-loadbalancer-#{loadbalancers}/' -i /etc/hosts"
+      loadbalancer.vm.provision "shell", path: "./scripts/install-loadbalancer.sh"
+    end
+  end
+
 
 end
 
