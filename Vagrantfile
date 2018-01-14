@@ -52,7 +52,7 @@ Vagrant.configure("2") do |config|
     etcd_name = "k8s-etcd-#{etcds}"
     config.vm.define etcd_name do |etcd|
       config.vm.provider "virtualbox" do |vb_etcd|
-        vb_etcd.name = "Etcd-#{etcds}"
+        vb_etcd.name = "K8s-Etcd-#{etcds}"
         vb_etcd.cpus = etcd_cpu
         vb_etcd.gui = false
         vb_etcd.linked_clone = true
@@ -71,7 +71,7 @@ Vagrant.configure("2") do |config|
     master_name = "k8s-master-#{masters}"
     config.vm.define master_name do |master|
       config.vm.provider "virtualbox" do |vb_master|
-        vb_master.name = "Master-#{masters}"
+        vb_master.name = "K8s-Master-#{masters}"
         vb_master.cpus = master_cpu
         vb_master.gui = false
         vb_master.linked_clone = true
@@ -90,7 +90,7 @@ Vagrant.configure("2") do |config|
     worker_name = "k8s-worker-#{workers}"
     config.vm.define worker_name do |worker|
       config.vm.provider "virtualbox" do |vb_worker|
-        vb_worker.name = "Worker-#{workers}"
+        vb_worker.name = "K8s-Worker-#{workers}"
         vb_worker.cpus = worker_cpu
         vb_worker.gui = false
         vb_worker.linked_clone = true
@@ -109,7 +109,7 @@ Vagrant.configure("2") do |config|
     loadbalancer_name = "k8s-loadbalancer-#{loadbalancers}"
     config.vm.define loadbalancer_name do |loadbalancer|
       config.vm.provider "virtualbox" do |vb_loadbalancer|
-        vb_loadbalancer.name = "Loadbalancer-#{loadbalancers}"
+        vb_loadbalancer.name = "K8s-Loadbalancer-#{loadbalancers}"
         vb_loadbalancer.cpus = loadbalancer_cpu
         vb_loadbalancer.gui = false
         vb_loadbalancer.linked_clone = true
