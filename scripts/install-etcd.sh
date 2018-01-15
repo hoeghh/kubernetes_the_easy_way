@@ -2,7 +2,7 @@ echo "Installing etcd..."
 
 # Installing ETCD
 
-wget -q --show-progress --https-only --timestamping \
+wget -q --https-only --timestamping \
   "https://github.com/coreos/etcd/releases/download/v3.2.11/etcd-v3.2.11-linux-amd64.tar.gz"
 
 tar -xvf etcd-v3.2.11-linux-amd64.tar.gz
