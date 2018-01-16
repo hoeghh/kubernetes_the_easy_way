@@ -47,6 +47,9 @@ Vagrant.configure("2") do |config|
   config.vm.network "private_network", type: "dhcp"
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
 
+  # Copying host-file to every host
+  config.vm.provision "file", source: "hosts", destination: "/tmp/hosts"
+
   # Provitioning ETCD nodes
   (1 .. etcd_c). each do |etcds|
     etcd_name = "k8s-etcd-#{etcds}"
@@ -59,9 +62,16 @@ Vagrant.configure("2") do |config|
         vb_etcd.memory = etcd_mem
         vb_etcd.customize ["modifyvm", :id, "--cableconnected1", "on"]
       end
-      etcd.vm.network "private_network", ip: "192.168.10.#{etcds + 10}"
+      etcd.vm.network "private_network", ip: "192.168.50.#{etcds + 10}"
       etcd.vm.hostname = etcd_name
       etcd.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{etcds + 10} k8s-etcd-#{etcds}/' -i /etc/hosts"
+
+      # Copying certificates to host
+      etcd.vm.provision "file", source: "hosts",                  destination: "/tmp/hosts"
+      etcd.vm.provision "file", source: "ssl/kubernetes.pem",     destination: "/tmp/kubernetes.pem"
+      etcd.vm.provision "file", source: "ssl/kubernetes-key.pem", destination: "/tmp/kubernetes-key.pem"
+      etcd.vm.provision "file", source: "ssl/ca.pem",             destination: "/tmp/ca.pem"
+      # Running install script
       etcd.vm.provision "shell", path: "./scripts/install-etcd.sh"
     end
   end
@@ -78,9 +88,15 @@ Vagrant.configure("2") do |config|
         vb_master.memory = master_mem
         vb_master.customize ["modifyvm", :id, "--cableconnected1", "on"]
       end
-      master.vm.network "private_network", ip: "192.168.20.#{masters + 20}"
+      master.vm.network "private_network", ip: "192.168.50.#{masters + 20}"
       master.vm.hostname = master_name
       master.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{masters + 20} k8s-master-#{masters}/' -i /etc/hosts"
+
+      # Copying certificates to host
+      master.vm.provision "file", source: "hosts", destination: "/tmp/hosts"
+
+
+      # Running install script
       master.vm.provision "shell", path: "./scripts/install-master.sh"
     end
   end
@@ -97,9 +113,14 @@ Vagrant.configure("2") do |config|
         vb_worker.memory = worker_mem
         vb_worker.customize ["modifyvm", :id, "--cableconnected1", "on"]
       end
-      worker.vm.network "private_network", ip: "192.168.20.#{workers + 30}"
+      worker.vm.network "private_network", ip: "192.168.50.#{workers + 30}"
       worker.vm.hostname = worker_name
       worker.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{workers + 30} k8s-worker-#{workers}/' -i /etc/hosts"
+
+      # Copying certificates to host
+      worker.vm.provision "file", source: "hosts", destination: "/tmp/hosts"
+
+      # Running install script
       worker.vm.provision "shell", path: "./scripts/install-worker.sh"
     end
   end
@@ -116,9 +137,14 @@ Vagrant.configure("2") do |config|
         vb_loadbalancer.memory = loadbalancer_mem
         vb_loadbalancer.customize ["modifyvm", :id, "--cableconnected1", "on"]
       end
-      loadbalancer.vm.network "private_network", ip: "192.168.20.#{loadbalancers + 4}"
+      loadbalancer.vm.network "private_network", ip: "192.168.50.#{loadbalancers + 4}"
       loadbalancer.vm.hostname = loadbalancer_name
       loadbalancer.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{loadbalancers + 4} k8s-loadbalancer-#{loadbalancers}/' -i /etc/hosts"
+
+      # Copying certificates to host
+      loadbalancer.vm.provision "file", source: "hosts", destination: "/tmp/hosts"
+
+      # Running install script
       loadbalancer.vm.provision "shell", path: "./scripts/install-loadbalancer.sh"
     end
   end
