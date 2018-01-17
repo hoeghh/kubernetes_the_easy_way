@@ -12,7 +12,7 @@ This repository tries to automate the guide "Kubernetes the hard way" by Kelsey 
 - `cfssl`
 - `cfssljson`
 
-## Installing cfssl
+## Installing cfssl and cfssljson
 PKI and TLS Tools by Cloudflare (https://github.com/cloudflare/cfssl)
 ```
 For Linux :
@@ -28,6 +28,7 @@ For Mac :
 For Windows :
   Download https://pkg.cfssl.org/R1.2/cfssl_windows-amd64.exe
   Download https://pkg.cfssl.org/R1.2/cfssljson_windows-amd64.exe
+  Do whatever Windows people do
 ```
 
 ## Getting started
