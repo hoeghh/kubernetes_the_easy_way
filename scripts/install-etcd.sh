@@ -14,7 +14,6 @@ rm -f etcd-v3.2.11-linux-amd64.tar.gz
 
 mkdir -p /etc/etcd /var/lib/etcd
 
-# TODO Get certificates when generated
 cp /tmp/ca.pem /tmp/kubernetes-key.pem /tmp/kubernetes.pem /etc/etcd/
 
 INTERNAL_IP=$(/sbin/ifconfig eth2 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')
