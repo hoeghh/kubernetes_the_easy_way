@@ -15,5 +15,5 @@ echo "Checking if vm box should be updated..."
 
 echo "Running Vagrant, this will take a while...
 Follow progress in logs/vagrant-provition.log"
-#vagrant up &> logs/vagrant-provition.log
+vagrant up &> logs/vagrant-provition.log
 

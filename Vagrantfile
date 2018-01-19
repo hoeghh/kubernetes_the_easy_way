@@ -120,6 +120,10 @@ Vagrant.configure("2") do |config|
       # Copying certificates to host
       worker.vm.provision "file", source: "output/hosts", destination: "/tmp/hosts"
 
+      # Copying config files for authentication of kubelet and kube-proxy
+      worker.vm.provision "file", source: "output/k8s-worker-#{workers}.kubeconfig", destination: "/tmp/k8s-worker-#{workers}.kubeconfig"
+      worker.vm.provision "file", source: "output/kube-proxy.kubeconfig", destination: "/tmp/kube-proxy.kubeconfig"
+
       # Running install script
       worker.vm.provision "shell", path: "./scripts/install-worker.sh"
     end
