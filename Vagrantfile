@@ -48,7 +48,7 @@ Vagrant.configure("2") do |config|
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
 
   # Copying host-file to every host
-  config.vm.provision "file", source: "hosts", destination: "/tmp/hosts"
+  config.vm.provision "file", source: "output/hosts", destination: "/tmp/hosts"
 
   # Provitioning ETCD nodes
   (1 .. etcd_c). each do |etcds|
@@ -67,7 +67,7 @@ Vagrant.configure("2") do |config|
       etcd.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{etcds + 10} k8s-etcd-#{etcds}/' -i /etc/hosts"
 
       # Copying certificates to host
-      etcd.vm.provision "file", source: "hosts",                  destination: "/tmp/hosts"
+      etcd.vm.provision "file", source: "output/hosts",                  destination: "/tmp/hosts"
       etcd.vm.provision "file", source: "ssl/kubernetes.pem",     destination: "/tmp/kubernetes.pem"
       etcd.vm.provision "file", source: "ssl/kubernetes-key.pem", destination: "/tmp/kubernetes-key.pem"
       etcd.vm.provision "file", source: "ssl/ca.pem",             destination: "/tmp/ca.pem"
@@ -93,7 +93,7 @@ Vagrant.configure("2") do |config|
       master.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{masters + 20} k8s-master-#{masters}/' -i /etc/hosts"
 
       # Copying certificates to host
-      master.vm.provision "file", source: "hosts", destination: "/tmp/hosts"
+      master.vm.provision "file", source: "output/hosts", destination: "/tmp/hosts"
 
 
       # Running install script
@@ -118,7 +118,7 @@ Vagrant.configure("2") do |config|
       worker.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{workers + 30} k8s-worker-#{workers}/' -i /etc/hosts"
 
       # Copying certificates to host
-      worker.vm.provision "file", source: "hosts", destination: "/tmp/hosts"
+      worker.vm.provision "file", source: "output/hosts", destination: "/tmp/hosts"
 
       # Running install script
       worker.vm.provision "shell", path: "./scripts/install-worker.sh"
@@ -142,7 +142,7 @@ Vagrant.configure("2") do |config|
       loadbalancer.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{loadbalancers + 4} k8s-loadbalancer-#{loadbalancers}/' -i /etc/hosts"
 
       # Copying certificates to host
-      loadbalancer.vm.provision "file", source: "hosts", destination: "/tmp/hosts"
+      loadbalancer.vm.provision "file", source: "output/hosts", destination: "/tmp/hosts"
 
       # Running install script
       loadbalancer.vm.provision "shell", path: "./scripts/install-loadbalancer.sh"
