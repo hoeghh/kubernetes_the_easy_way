@@ -16,7 +16,7 @@ mkdir -p /etc/etcd /var/lib/etcd
 
 cp /tmp/ca.pem /tmp/kubernetes-key.pem /tmp/kubernetes.pem /etc/etcd/
 
-INTERNAL_IP=$(/sbin/ifconfig eth2 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')
+INTERNAL_IP=$(cat /tmp/hosts | grep "$(hostname)" | head -1 | cut -d" " -f1)
 ETCD_NAME=$(hostname -s)
 ETCD_COUNT=$(cat /tmp/hosts | grep etcd | wc -l)
 
