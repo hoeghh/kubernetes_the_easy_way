@@ -66,11 +66,14 @@ Vagrant.configure("2") do |config|
       etcd.vm.hostname = etcd_name
       etcd.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{etcds + 10} k8s-etcd-#{etcds}/' -i /etc/hosts"
 
-      # Copying certificates to host
+      # Copying hosts file to host
       etcd.vm.provision "file", source: "output/hosts",                  destination: "/tmp/hosts"
+
+      # Copying certificates to host
       etcd.vm.provision "file", source: "ssl/kubernetes.pem",     destination: "/tmp/kubernetes.pem"
       etcd.vm.provision "file", source: "ssl/kubernetes-key.pem", destination: "/tmp/kubernetes-key.pem"
       etcd.vm.provision "file", source: "ssl/ca.pem",             destination: "/tmp/ca.pem"
+
       # Running install script
       etcd.vm.provision "shell", path: "./scripts/install-etcd.sh"
     end
@@ -92,9 +95,11 @@ Vagrant.configure("2") do |config|
       master.vm.hostname = master_name
       master.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{masters + 20} k8s-master-#{masters}/' -i /etc/hosts"
 
-      # Copying certificates to host
+      # Copying hosts file to host
       master.vm.provision "file", source: "output/hosts", destination: "/tmp/hosts"
 
+      # Copying data encryption key and config to master nodes
+      master.vm.provision "file", source: "output/encryption-config.yaml", destination: "/tmp/encryption-config.yaml"
 
       # Running install script
       master.vm.provision "shell", path: "./scripts/install-master.sh"
@@ -117,7 +122,7 @@ Vagrant.configure("2") do |config|
       worker.vm.hostname = worker_name
       worker.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{workers + 30} k8s-worker-#{workers}/' -i /etc/hosts"
 
-      # Copying certificates to host
+      # Copying hosts file to host
       worker.vm.provision "file", source: "output/hosts", destination: "/tmp/hosts"
 
       # Copying config files for authentication of kubelet and kube-proxy
@@ -145,7 +150,7 @@ Vagrant.configure("2") do |config|
       loadbalancer.vm.hostname = loadbalancer_name
       loadbalancer.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{loadbalancers + 4} k8s-loadbalancer-#{loadbalancers}/' -i /etc/hosts"
 
-      # Copying certificates to host
+      # Copying hosts file to host
       loadbalancer.vm.provision "file", source: "output/hosts", destination: "/tmp/hosts"
 
       # Running install script
