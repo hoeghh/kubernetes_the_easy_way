@@ -91,7 +91,7 @@ do
 }
 EOF
 
-  EXTERNAL_IP=$(cat ../hosts | grep ${instance} | cut -d" " -f1)
+  EXTERNAL_IP=$(cat ../output/hosts | grep ${instance} | cut -d" " -f1)
 
   cfssl gencert \
     -ca=ca.pem \
@@ -156,7 +156,7 @@ cat > kubernetes-csr.json <<EOF
 }
 EOF
 
-HOSTNAMES=$(cat ../hosts | cut -d" " -f1 | tr '\n' ',')
+HOSTNAMES=$(cat ../output/hosts | cut -d" " -f1 | tr '\n' ',')
 HOSTNAMES=${HOSTNAMES::-1}
 
 # Generate the Kubernetes API Server certificate and private key
