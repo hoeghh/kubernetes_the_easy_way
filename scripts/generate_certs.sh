@@ -134,7 +134,7 @@ cfssl gencert \
 
 # Retrieve the kubernetes-the-hard-way static IP address
 # This is the floating ip we create with CoroSync and Pacemaker
-KUBERNETES_PUBLIC_ADDRESS="192.160.50.10"
+KUBERNETES_PUBLIC_ADDRESS="192.160.50.21"
 
 # Create the Kubernetes API Server certificate signing request
 cat > kubernetes-csr.json <<EOF
@@ -158,22 +158,15 @@ EOF
 
 HOSTNAMES=$(cat ../output/hosts | cut -d" " -f1 | tr '\n' ',')
 HOSTNAMES=${HOSTNAMES::-1}
+HOSTNAMES=$HOSTNAMES",${KUBERNETES_PUBLIC_ADDRESS},10.32.0.1,127.0.0.1,kubernetes.default"
+echo "Adding hosts : "$HOSTNAMES
 
 # Generate the Kubernetes API Server certificate and private key
 cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
   -config=ca-config.json \
-  -hostname=$HOSTNAMES,10.32.0.1,10.240.0.10,10.240.0.11,10.240.0.12,${KUBERNETES_PUBLIC_ADDRESS},127.0.0.1,kubernetes.default \
+  -hostname=$HOSTNAMES \
   -profile=kubernetes \
   kubernetes-csr.json | cfssljson -bare kubernetes
 
-# Copy the appropriate certificates and private keys to each worker instance
-#for instance in worker-0 worker-1 worker-2; do
-#  scp ca.pem ${instance}-key.pem ${instance}.pem ${instance}:~/
-#done
-
-# Copy the appropriate certificates and private keys to each controller instance
-#for instance in controller-0 controller-1 controller-2; do
-#  scp ca.pem ca-key.pem kubernetes-key.pem kubernetes.pem ${instance}:~/
-#done

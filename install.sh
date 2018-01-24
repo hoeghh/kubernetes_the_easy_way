@@ -19,4 +19,3 @@ scripts/generate_kube_config.sh &> logs/kube-configs.log
 echo "Running Vagrant, this will take a while...
 Follow progress in logs/vagrant-provition.log"
 vagrant up &> logs/vagrant-provition.log
-

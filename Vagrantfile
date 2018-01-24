@@ -101,6 +101,12 @@ Vagrant.configure("2") do |config|
       # Copying data encryption key and config to master nodes
       master.vm.provision "file", source: "output/encryption-config.yaml", destination: "/tmp/encryption-config.yaml"
 
+      # Copying certificates to host
+      master.vm.provision "file", source: "ssl/kubernetes.pem",     destination: "/tmp/kubernetes.pem"
+      master.vm.provision "file", source: "ssl/kubernetes-key.pem", destination: "/tmp/kubernetes-key.pem"
+      master.vm.provision "file", source: "ssl/ca.pem",             destination: "/tmp/ca.pem"
+      master.vm.provision "file", source: "ssl/ca-key.pem",             destination: "/tmp/ca-key.pem"
+
       # Running install script
       master.vm.provision "shell", path: "./scripts/install-master.sh"
     end
