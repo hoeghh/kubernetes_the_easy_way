@@ -1,6 +1,11 @@
 # Kubernetes the easy way
 
-> This is work in progress. As of this commit the certificates, a hostfile, the machines are provitioned and ETCD is installed, connected and working. I will keep this section updated as progress is done.
+```
+OBS: This is work in progress. 
+As of this commit the certificates, a hostfile, the machines are provitioned and ETCD is installed, connected and working. 
+The master server is now installed and kube-apiserver is running and connected to etcd along the controller and scheduler.
+I will keep this section updated as progress is done.
+```
 
 This repository tries to automate the guide "Kubernetes the hard way" by Kelsey Hightower, using Vagrant and Virtualbox.
 
