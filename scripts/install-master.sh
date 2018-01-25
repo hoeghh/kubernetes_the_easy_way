@@ -44,7 +44,10 @@ mv kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/local/bin/
 mkdir -p /var/lib/kubernetes/
 mv /tmp/ca.pem /tmp/ca-key.pem /tmp/kubernetes-key.pem /tmp/kubernetes.pem /tmp/encryption-config.yaml /var/lib/kubernetes/
 
-INTERNAL_IP="192.168.50.21"
+# When CoroSync and Pagemaker is done, this should be pointing to 192.168.50.20
+INTERNAL_IP=$(cat /tmp/hosts | grep $(hostname -s) | cut -d" " -f1)
+
+# Count the number of master servers
 MASTER_COUNT=$(cat /tmp/hosts | grep "k8s-master-" | wc -l)
 
 cat > kube-apiserver.service <<EOF
