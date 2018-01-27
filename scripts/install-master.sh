@@ -21,16 +21,16 @@ ETCD_CLUSTER_LIST=$(echo $ETCD_CLUSTER_LIST | tr -d '[:space:]')
 
 # Download binaries we need
 echo "Downloading binaries... please wait."
-wget -q --https-only --timestamping \
+wget -q --timestamping \
   "https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kube-apiserver" &
 
-wget -q --https-only --timestamping \
+wget -q --timestamping \
   "https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kube-controller-manager" & 
 
-wget -q --https-only --timestamping \
+wget -q --timestamping \
   "https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kube-scheduler" &
 
-wget -q --https-only --timestamping \
+wget -q --timestamping \
   "https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kubectl" &
 
 # Wait for downloads to finish
