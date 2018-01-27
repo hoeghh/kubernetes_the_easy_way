@@ -8,7 +8,7 @@ I will keep this section updated as progress is done.
 I have switched to Centos from Ubuntu in the newest commit.
 ```
 
-This repository tries to automate the guide "Kubernetes the hard way" by Kelsey Hightower, using Vagrant and Virtualbox.
+This repository tries to automate the guide "[Kubernetes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way)" by Kelsey Hightower, using Vagrant and Virtualbox.
 
 ## Prerequisites
 
