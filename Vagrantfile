@@ -109,6 +109,8 @@ Vagrant.configure("2") do |config|
 
       # Running install script
       master.vm.provision "shell", path: "./scripts/install-master.sh"
+      master.vm.provision "shell", path: "./scripts/install-corosync.sh"
+
     end
   end
 
