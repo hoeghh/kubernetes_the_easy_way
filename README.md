@@ -6,6 +6,7 @@ As of this commit the certificates, a hostfile, the machines are provitioned and
 The master server is now installed and kube-apiserver is running and connected to etcd along the controller and scheduler.
 I will keep this section updated as progress is done.
 I have switched to Centos from Ubuntu in the newest commit.
+Worker nodes are now created and connects to the master pool on the floating ip they share.
 ```
 
 This repository tries to automate the guide "[Kubernetes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way)" by Kelsey Hightower, using Vagrant and Virtualbox.

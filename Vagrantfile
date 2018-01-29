@@ -133,6 +133,11 @@ Vagrant.configure("2") do |config|
       # Copying hosts file to host
       worker.vm.provision "file", source: "output/hosts", destination: "/tmp/hosts"
 
+      # Move certificate to host
+      worker.vm.provision "file", source: "ssl/ca.pem",             destination: "/tmp/ca.pem"
+      worker.vm.provision "file", source: "ssl/k8s-worker-#{workers}-key.pem", destination: "/tmp/k8s-worker-#{workers}-key.pem"
+      worker.vm.provision "file", source: "ssl/k8s-worker-#{workers}.pem", destination: "/tmp/k8s-worker-#{workers}.pem"
+
       # Copying config files for authentication of kubelet and kube-proxy
       worker.vm.provision "file", source: "output/k8s-worker-#{workers}.kubeconfig", destination: "/tmp/k8s-worker-#{workers}.kubeconfig"
       worker.vm.provision "file", source: "output/kube-proxy.kubeconfig", destination: "/tmp/kube-proxy.kubeconfig"
