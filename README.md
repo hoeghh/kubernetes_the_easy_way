@@ -50,6 +50,7 @@ Now it calls Vagrant to provition the nodes. While provitioning the nodes, Vagra
 
 ## Connect local kubectl to the new cluster
 # Generate a kubeconfig file suitable for authenticating as the admin user
+```
 kubectl config set-cluster kubernetes-the-easy-way \
   --certificate-authority=ssl/ca.pem \
   --embed-certs=true \
@@ -62,12 +63,13 @@ kubectl config set-credentials admin \
 kubectl config set-context kubernetes-the-easy-way \
   --cluster=kubernetes-the-easy-way \
   --user=admin
+```
 
-# Set the corrent context to kubernets-the-easy-way
-kubectl config use-context kubernetes-the-easy-way
+# Set the current context to kubernets-the-easy-way
+```kubectl config use-context kubernetes-the-easy-way```
 
 # Test connection and see worker nodes connected
-kubectl get nodes
+```kubectl get nodes```
 
 ### Destroy machines
 If Kubernetes is not your thing after all, or that you for other reasons want to remove the cluster, simply run this script 
