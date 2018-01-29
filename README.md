@@ -48,6 +48,27 @@ The script set the number of nodes you want and the resources they get. It then 
 
 Now it calls Vagrant to provition the nodes. While provitioning the nodes, Vagrant will copy scripts and certifiates to each node and execute them. The script can be found under the scripts folder and the certificates under the folder ssl.
 
+## Connect local kubectl to the new cluster
+# Generate a kubeconfig file suitable for authenticating as the admin user
+kubectl config set-cluster kubernetes-the-easy-way \
+  --certificate-authority=ssl/ca.pem \
+  --embed-certs=true \
+  --server=https://192.168.50.20:6443
+
+kubectl config set-credentials admin \
+  --client-certificate=ssl/admin.pem \
+  --client-key=ssl/admin-key.pem
+
+kubectl config set-context kubernetes-the-easy-way \
+  --cluster=kubernetes-the-easy-way \
+  --user=admin
+
+# Set the corrent context to kubernets-the-easy-way
+kubectl config use-context kubernetes-the-easy-way
+
+# Test connection and see worker nodes connected
+kubectl get nodes
+
 ### Destroy machines
 If Kubernetes is not your thing after all, or that you for other reasons want to remove the cluster, simply run this script 
 ```sh
