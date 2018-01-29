@@ -50,6 +50,7 @@ Now it calls Vagrant to provition the nodes. While provitioning the nodes, Vagra
 
 ## Connect local kubectl to the new cluster
 # Generate a kubeconfig file suitable for authenticating as the admin user
+# OBS: This is done by install.sh now
 ```
 kubectl config set-cluster kubernetes-the-easy-way \
   --certificate-authority=ssl/ca.pem \
