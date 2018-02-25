@@ -6,7 +6,7 @@ yum install -y socat libseccomp-devel btrfs-progs-devel util-linux
 # Install Docker and specific dependencies
 yum install -y yum-utils device-mapper-persistent-data lvm2
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-yum install docker-ce
+yum install docker-ce -y
 
 
 # Disabling swap (now and permently)
@@ -37,6 +37,9 @@ sudo mkdir -p \
 
 # Wait for downloads to finish
 wait
+
+# Unpack CNI plugin
+tar -xvf cni-plugins-amd64-v0.6.0.tgz -C /opt/cni/bin/
 
 # Install the worker binaires
 chmod +x kubectl kube-proxy kubelet
