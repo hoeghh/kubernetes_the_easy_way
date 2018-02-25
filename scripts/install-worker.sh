@@ -1,7 +1,7 @@
 echo "Installing worker..."
 
 # The socat binary enables support for the kubectl port-forward command
-yum install -y socat
+yum install -y socat libseccomp-devel btrfs-progs-devel util-linux 
 
 # Disabling swap (now and permently)
 swapoff -a
@@ -16,6 +16,7 @@ cat /tmp/hosts >> /etc/hosts
 
 # Download binaries
 wget -q --timestamping  https://github.com/containernetworking/plugins/releases/download/v0.6.0/cni-plugins-amd64-v0.6.0.tgz &
+wget -q --timestamping  https://github.com/containerd/cri-containerd/releases/download/v1.0.0-beta.1/cri-containerd-1.0.0-beta.1.linux-amd64.tar.gz &
 wget -q --timestamping  https://github.com/kubernetes-incubator/cri-containerd/releases/download/v1.0.0-beta.0/cri-containerd-1.0.0-beta.0.linux-amd64.tar.gz &
 wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kubectl &
 wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kube-proxy & 
@@ -35,7 +36,7 @@ wait
 
 # Install the worker binaires
 tar -xvf cni-plugins-amd64-v0.6.0.tgz -C /opt/cni/bin/
-tar -xvf cri-containerd-1.0.0-beta.0.linux-amd64.tar.gz -C /
+tar -xvf cri-containerd-1.0.0-beta.1.linux-amd64.tar.gz -C /
 chmod +x kubectl kube-proxy kubelet
 mv kubectl kube-proxy kubelet /usr/local/bin/
 

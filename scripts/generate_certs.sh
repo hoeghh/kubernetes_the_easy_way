@@ -134,7 +134,7 @@ cfssl gencert \
 
 # Retrieve the kubernetes-the-hard-way static IP address
 # This is the floating ip we create with CoroSync and Pacemaker
-KUBERNETES_PUBLIC_ADDRESS="192.160.50.21"
+KUBERNETES_PUBLIC_ADDRESS="192.160.50.20"
 
 # Create the Kubernetes API Server certificate signing request
 cat > kubernetes-csr.json <<EOF

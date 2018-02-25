@@ -42,5 +42,5 @@ kubectl create -f "https://storage.googleapis.com/kubernetes-the-hard-way/kube-d
 
 echo "Deploying WeaveNet..."
 kubever=$(kubectl version | base64 | tr -d '\n')
-kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$kubever" &> ../logs/weavenet.log
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$kubever" &> logs/weavenet.log
 

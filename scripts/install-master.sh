@@ -3,7 +3,6 @@ echo "Installing master..."
 # Populate hosts file with new entries
 # localhost is missing on 127.0.0.1 by Vagrant. This is a hack and we need to figure out why it is missing
 cat /tmp/hosts >> /etc/hosts
-echo "127.0.0.1 localhost" >> /etc/hosts
 
 # Prepare variables for etcd
 ETCD_NAME=$(hostname -s)

@@ -64,7 +64,6 @@ Vagrant.configure("2") do |config|
       end
       etcd.vm.network "private_network", ip: "192.168.50.#{etcds + 10}"
       etcd.vm.hostname = etcd_name
-      etcd.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{etcds + 10} k8s-etcd-#{etcds}/' -i /etc/hosts"
 
       # Copying hosts file to host
       etcd.vm.provision "file", source: "output/hosts",                  destination: "/tmp/hosts"
@@ -93,7 +92,6 @@ Vagrant.configure("2") do |config|
       end
       master.vm.network "private_network", ip: "192.168.50.#{masters + 20}"
       master.vm.hostname = master_name
-      master.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{masters + 20} k8s-master-#{masters}/' -i /etc/hosts"
 
       # Copying hosts file to host
       master.vm.provision "file", source: "output/hosts", destination: "/tmp/hosts"
@@ -128,7 +126,6 @@ Vagrant.configure("2") do |config|
       end
       worker.vm.network "private_network", ip: "192.168.50.#{workers + 30}"
       worker.vm.hostname = worker_name
-      worker.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{workers + 30} k8s-worker-#{workers}/' -i /etc/hosts"
 
       # Copying hosts file to host
       worker.vm.provision "file", source: "output/hosts", destination: "/tmp/hosts"
@@ -161,7 +158,6 @@ Vagrant.configure("2") do |config|
       end
       loadbalancer.vm.network "private_network", ip: "192.168.50.#{loadbalancers + 4}"
       loadbalancer.vm.hostname = loadbalancer_name
-      loadbalancer.vm.provision :shell, inline: "sed 's/127\.0\.0\.1.*.*/192\.168\.50\.#{loadbalancers + 4} k8s-loadbalancer-#{loadbalancers}/' -i /etc/hosts"
 
       # Copying hosts file to host
       loadbalancer.vm.provision "file", source: "output/hosts", destination: "/tmp/hosts"
