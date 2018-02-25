@@ -3,6 +3,12 @@ echo "Installing worker..."
 # The socat binary enables support for the kubectl port-forward command
 yum install -y socat libseccomp-devel btrfs-progs-devel util-linux 
 
+# Install Docker and specific dependencies
+yum install -y yum-utils device-mapper-persistent-data lvm2
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+yum install docker-ce
+
+
 # Disabling swap (now and permently)
 swapoff -a
 sed -i.bak '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
@@ -16,8 +22,6 @@ cat /tmp/hosts >> /etc/hosts
 
 # Download binaries
 wget -q --timestamping  https://github.com/containernetworking/plugins/releases/download/v0.6.0/cni-plugins-amd64-v0.6.0.tgz &
-wget -q --timestamping  https://github.com/containerd/cri-containerd/releases/download/v1.0.0-beta.1/cri-containerd-1.0.0-beta.1.linux-amd64.tar.gz &
-wget -q --timestamping  https://github.com/kubernetes-incubator/cri-containerd/releases/download/v1.0.0-beta.0/cri-containerd-1.0.0-beta.0.linux-amd64.tar.gz &
 wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kubectl &
 wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kube-proxy & 
 wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kubelet &
@@ -35,8 +39,6 @@ sudo mkdir -p \
 wait
 
 # Install the worker binaires
-tar -xvf cni-plugins-amd64-v0.6.0.tgz -C /opt/cni/bin/
-tar -xvf cri-containerd-1.0.0-beta.1.linux-amd64.tar.gz -C /
 chmod +x kubectl kube-proxy kubelet
 mv kubectl kube-proxy kubelet /usr/local/bin/
 
@@ -81,13 +83,14 @@ mv /tmp/${HOSTNAME}-key.pem /tmp/${HOSTNAME}.pem /var/lib/kubelet/
 mv /tmp/${HOSTNAME}.kubeconfig /var/lib/kubelet/kubeconfig
 mv /tmp/ca.pem /var/lib/kubernetes/
 
+
 # Create the kubelet.service systemd unit file:
 cat > kubelet.service <<EOF
 [Unit]
 Description=Kubernetes Kubelet
 Documentation=https://github.com/kubernetes/kubernetes
-After=cri-containerd.service
-Requires=cri-containerd.service
+After=docker.service
+Requires=docker.service
 
 [Service]
 ExecStart=/usr/local/bin/kubelet \\
@@ -98,8 +101,8 @@ ExecStart=/usr/local/bin/kubelet \\
   --cloud-provider= \\
   --cluster-dns=10.32.0.10 \\
   --cluster-domain=cluster.local \\
-  --container-runtime=remote \\
-  --container-runtime-endpoint=unix:///var/run/cri-containerd.sock \\
+  --container-runtime=docker \\
+  --container-runtime-endpoint=unix:///var/run/docker.sock \\
   --image-pull-progress-deadline=2m \\
   --kubeconfig=/var/lib/kubelet/kubeconfig \\
   --network-plugin=cni \\
@@ -141,7 +144,7 @@ EOF
 # Start the Worker Services
 mv kubelet.service kube-proxy.service /etc/systemd/system/
 systemctl daemon-reload
-systemctl enable containerd cri-containerd kubelet kube-proxy
-systemctl start containerd cri-containerd kubelet kube-proxy
+systemctl enable docker kubelet kube-proxy
+systemctl start docker kubelet kube-proxy
 
 
