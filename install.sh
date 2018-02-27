@@ -20,6 +20,9 @@ echo "Running Vagrant, this will take a while...
 Follow progress in logs/vagrant-provition.log"
 vagrant up &> logs/vagrant-provition.log
 
+# Running post install deploy script
+(cd scripts; ./post_deploy.sh  &> ../logs/post_deploy.log)
+
 echo "Generating kubeconfig file for admin user..."
 kubectl config set-cluster kubernetes-the-easy-way \
   --certificate-authority=ssl/ca.pem \
@@ -37,10 +40,4 @@ kubectl config set-context kubernetes-the-easy-way \
 echo "Set the current context to kubernets-the-easy-way..."
 kubectl config use-context kubernetes-the-easy-way >> logs/kubedeploy.log
 
-echo "Deploying KubeDNS..."
-kubectl create -f "https://storage.googleapis.com/kubernetes-the-hard-way/kube-dns.yaml" > logs/kubedns.log
-
-echo "Deploying WeaveNet..."
-kubever=$(kubectl version | base64 | tr -d '\n')
-kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$kubever" &> logs/weavenet.log
 

@@ -1,45 +1,54 @@
 echo "Installing worker..."
 
 # The socat binary enables support for the kubectl port-forward command
-yum install -y socat libseccomp-devel btrfs-progs-devel util-linux 
+yum install -y socat libseccomp-devel btrfs-progs-devel util-linux nfs-utils 
 
 # Install Docker and specific dependencies
-yum install -y yum-utils device-mapper-persistent-data lvm2
-yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-yum install docker-ce -y
+yum remove -y 	  docker \
+                  docker-common \
+                  docker-selinux \
+                  docker-engine
 
+yum install -y 	  yum-utils \
+		  device-mapper-persistent-data \
+		  lvm2
+
+yum-config-manager \
+		  --add-repo \
+		  https://download.docker.com/linux/centos/docker-ce.repo
+
+yum-config-manager --disable docker-ce-edge
+
+yum install -y    docker-ce
 
 # Disabling swap (now and permently)
+echo "Disableling swap..."
 swapoff -a
 sed -i.bak '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 
 # We will be using weave net for networking, so we need to pass bridged IPv4 traffic to iptables’ chains
+echo "Setting up network..."
 echo "net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1" > /etc/sysctl.conf
 
 # Add hostnames to hosts file
 cat /tmp/hosts >> /etc/hosts
 
-# Download binaries
-wget -q --timestamping  https://github.com/containernetworking/plugins/releases/download/v0.6.0/cni-plugins-amd64-v0.6.0.tgz &
-wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kubectl &
-wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kube-proxy & 
-wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kubelet &
-
 # Create the installation directories
 sudo mkdir -p \
-  /etc/cni/net.d \
-  /opt/cni/bin \
   /var/lib/kubelet \
   /var/lib/kube-proxy \
   /var/lib/kubernetes \
   /var/run/kubernetes
 
+# Download binaries
+echo "Downloading files..."
+wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kubectl &
+wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kube-proxy & 
+wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kubelet &
+
 # Wait for downloads to finish
 wait
-
-# Unpack CNI plugin
-tar -xvf cni-plugins-amd64-v0.6.0.tgz -C /opt/cni/bin/
 
 # Install the worker binaires
 chmod +x kubectl kube-proxy kubelet
@@ -51,35 +60,6 @@ mv kubectl kube-proxy kubelet /usr/local/bin/
 WORKER_NB=$(echo ${HOSTNAME} | rev | cut -d"-" -f1 | rev)
 POD_CIDR="10.200.$WORKER_NB.0/24"
 
-# Create the bridge network configuration file
-cat > 10-bridge.conf <<EOF
-{
-    "cniVersion": "0.3.1",
-    "name": "bridge",
-    "type": "bridge",
-    "bridge": "cnio0",
-    "isGateway": true,
-    "ipMasq": true,
-    "ipam": {
-        "type": "host-local",
-        "ranges": [
-          [{"subnet": "${POD_CIDR}"}]
-        ],
-        "routes": [{"dst": "0.0.0.0/0"}]
-    }
-}
-EOF
-
-# Create the loopback network configuration file:
-cat > 99-loopback.conf <<EOF
-{
-    "cniVersion": "0.3.1",
-    "type": "loopback"
-}
-EOF
-
-#Move the network configuration files to the CNI configuration directory:
-mv 10-bridge.conf 99-loopback.conf /etc/cni/net.d/
 
 #Configure the Kubelet
 mv /tmp/${HOSTNAME}-key.pem /tmp/${HOSTNAME}.pem /var/lib/kubelet/
@@ -104,11 +84,8 @@ ExecStart=/usr/local/bin/kubelet \\
   --cloud-provider= \\
   --cluster-dns=10.32.0.10 \\
   --cluster-domain=cluster.local \\
-  --container-runtime=docker \\
-  --container-runtime-endpoint=unix:///var/run/docker.sock \\
   --image-pull-progress-deadline=2m \\
   --kubeconfig=/var/lib/kubelet/kubeconfig \\
-  --network-plugin=cni \\
   --pod-cidr=${POD_CIDR} \\
   --register-node=true \\
   --runtime-request-timeout=15m \\
@@ -144,8 +121,10 @@ RestartSec=5
 WantedBy=multi-user.target
 EOF
 
-# Start the Worker Services
 mv kubelet.service kube-proxy.service /etc/systemd/system/
+
+# Start the Worker Services
+echo "Starting services..."
 systemctl daemon-reload
 systemctl enable docker kubelet kube-proxy
 systemctl start docker kubelet kube-proxy

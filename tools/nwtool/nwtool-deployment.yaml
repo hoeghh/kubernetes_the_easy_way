@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nwtool
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nwtool
+    spec:
+      containers:
+      - name: nwtool
+        image: praqma/network-multitool
+        resources:
+          limits:
+            memory: 256Mi
+            cpu: "250m"
+          requests:
+            memory: 128Mi
+            cpu: "100m"
+        ports:
+        - containerPort: 80
+          name: nwtool
+
