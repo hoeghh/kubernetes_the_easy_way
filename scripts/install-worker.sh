@@ -35,20 +35,25 @@ net.bridge.bridge-nf-call-iptables = 1" > /etc/sysctl.conf
 cat /tmp/hosts >> /etc/hosts
 
 # Create the installation directories
-sudo mkdir -p \
-  /var/lib/kubelet \
+sudo mkdir -p         \
+  /var/lib/kubelet    \
   /var/lib/kube-proxy \
   /var/lib/kubernetes \
-  /var/run/kubernetes
+  /opt/cni/bin        \
+  /var/run/kubernetes \
+  /etc/cni/net.d 
 
 # Download binaries
 echo "Downloading files..."
+wget -q --timestamping  https://github.com/containernetworking/plugins/releases/download/v0.6.0/cni-plugins-amd64-v0.6.0.tgz
 wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kubectl &
 wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kube-proxy & 
 wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kubelet &
 
 # Wait for downloads to finish
 wait
+
+tar -xvf cni-plugins-amd64-v0.6.0.tgz -C /opt/cni/bin/
 
 # Install the worker binaires
 chmod +x kubectl kube-proxy kubelet
@@ -88,6 +93,8 @@ ExecStart=/usr/local/bin/kubelet \\
   --kubeconfig=/var/lib/kubelet/kubeconfig \\
   --pod-cidr=${POD_CIDR} \\
   --register-node=true \\
+  --network-plugin=cni \\
+  --cni-conf-dir=/etc/cni/net.d \\
   --runtime-request-timeout=15m \\
   --tls-cert-file=/var/lib/kubelet/${HOSTNAME}.pem \\
   --tls-private-key-file=/var/lib/kubelet/${HOSTNAME}-key.pem \\
@@ -110,7 +117,7 @@ Documentation=https://github.com/kubernetes/kubernetes
 
 [Service]
 ExecStart=/usr/local/bin/kube-proxy \\
-  --cluster-cidr=10.200.0.0/16 \\
+  --cluster-cidr=${POD_CIDR} \\
   --kubeconfig=/var/lib/kube-proxy/kubeconfig \\
   --proxy-mode=iptables \\
   --v=2
