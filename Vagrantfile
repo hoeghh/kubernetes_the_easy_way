@@ -162,6 +162,12 @@ Vagrant.configure("2") do |config|
       # Copying hosts file to host
       loadbalancer.vm.provision "file", source: "output/hosts", destination: "/tmp/hosts"
 
+      # Move certificate to host
+      loadbalancer.vm.provision "file", source: "ssl/ca.pem",             destination: "/tmp/ca.pem"
+      loadbalancer.vm.provision "file", source: "ssl/admin.pem",          destination: "/tmp/admin.pem"
+      loadbalancer.vm.provision "file", source: "ssl/admin-key.pem",          destination: "/tmp/admin-key.pem"
+
+
       # Running install script
       loadbalancer.vm.provision "shell", path: "./scripts/install-loadbalancer.sh"
     end
