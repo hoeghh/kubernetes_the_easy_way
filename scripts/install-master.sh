@@ -1,5 +1,7 @@
 echo "Installing master..."
 
+yum install -y conntrack-tools.x86_64
+
 # Populate hosts file with new entries
 # localhost is missing on 127.0.0.1 by Vagrant. This is a hack and we need to figure out why it is missing
 cat /tmp/hosts >> /etc/hosts

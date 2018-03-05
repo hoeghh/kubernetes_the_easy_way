@@ -1,7 +1,7 @@
 echo "Installing worker..."
 
 # The socat binary enables support for the kubectl port-forward command
-yum install -y socat libseccomp-devel btrfs-progs-devel util-linux nfs-utils 
+yum install -y socat libseccomp-devel btrfs-progs-devel util-linux nfs-utils conntrack-tools.x86_64
 
 # Install Docker and specific dependencies
 yum remove -y 	  docker \
@@ -20,6 +20,11 @@ yum-config-manager \
 yum-config-manager --disable docker-ce-edge
 
 yum install -y    docker-ce
+
+# Removing Docker-created bridge and iptables rules
+iptables -t nat -F
+ip link set docker0 down
+ip link delete docker0
 
 # Disabling swap (now and permently)
 echo "Disableling swap..."
@@ -117,7 +122,7 @@ Documentation=https://github.com/kubernetes/kubernetes
 
 [Service]
 ExecStart=/usr/local/bin/kube-proxy \\
-  --cluster-cidr=${POD_CIDR} \\
+  --cluster-cidr=10.32.0.0/12 \\
   --kubeconfig=/var/lib/kube-proxy/kubeconfig \\
   --proxy-mode=iptables \\
   --v=2
