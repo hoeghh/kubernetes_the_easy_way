@@ -2,7 +2,7 @@ echo "Installing etcd..."
 
 # Installing ETCD
 
-echo /tmp/hosts >> /etc/hosts
+cat /tmp/hosts >> /etc/hosts
 
 wget -q --timestamping \
   "https://github.com/coreos/etcd/releases/download/v3.2.11/etcd-v3.2.11-linux-amd64.tar.gz"

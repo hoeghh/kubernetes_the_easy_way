@@ -64,6 +64,7 @@ Vagrant.configure("2") do |config|
       end
       etcd.vm.network "private_network", ip: "192.168.50.#{etcds + 10}"
       etcd.vm.hostname = etcd_name
+      etcd.vm.provision :shell, inline: "sed -i '/#{etcd_name}/d' /etc/hosts"
 
       # Copying hosts file to host
       etcd.vm.provision "file", source: "output/hosts",                  destination: "/tmp/hosts"
@@ -92,6 +93,7 @@ Vagrant.configure("2") do |config|
       end
       master.vm.network "private_network", ip: "192.168.50.#{masters + 20}"
       master.vm.hostname = master_name
+      master.vm.provision :shell, inline: "sed -i '/#{master_name}/d' /etc/hosts"
 
       # Copying hosts file to host
       master.vm.provision "file", source: "output/hosts", destination: "/tmp/hosts"
@@ -107,7 +109,7 @@ Vagrant.configure("2") do |config|
 
       # Running install script
       master.vm.provision "shell", path: "./scripts/install-master.sh"
-      master.vm.provision "shell", path: "./scripts/install-corosync.sh"
+      master.vm.provision "shell", path: "./scripts/install-corosync-master.sh"
 
     end
   end
@@ -126,6 +128,7 @@ Vagrant.configure("2") do |config|
       end
       worker.vm.network "private_network", ip: "192.168.50.#{workers + 30}"
       worker.vm.hostname = worker_name
+      worker.vm.provision :shell, inline: "sed -i '/#{worker_name}/d' /etc/hosts"
 
       # Copying hosts file to host
       worker.vm.provision "file", source: "output/hosts", destination: "/tmp/hosts"
@@ -158,6 +161,7 @@ Vagrant.configure("2") do |config|
       end
       loadbalancer.vm.network "private_network", ip: "192.168.50.#{loadbalancers + 4}"
       loadbalancer.vm.hostname = loadbalancer_name
+      loadbalancer.vm.provision :shell, inline: "sed -i '/#{loadbalancer_name}/d' /etc/hosts"
 
       # Copying hosts file to host
       loadbalancer.vm.provision "file", source: "output/hosts", destination: "/tmp/hosts"
@@ -170,6 +174,7 @@ Vagrant.configure("2") do |config|
 
       # Running install script
       loadbalancer.vm.provision "shell", path: "./scripts/install-loadbalancer.sh"
+      loadbalancer.vm.provision "shell", path: "./scripts/install-corosync-loadbalancer.sh"
     end
   end
 
