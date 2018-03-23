@@ -1,40 +1,47 @@
 echo "Installing worker..."
 
 # The socat binary enables support for the kubectl port-forward command
-yum install -y socat libseccomp-devel btrfs-progs-devel util-linux nfs-utils conntrack-tools.x86_64
+dnf install -y socat libseccomp-devel btrfs-progs-devel util-linux nfs-utils conntrack-tools.x86_64
 
 # Install Docker and specific dependencies
-yum remove -y 	  docker \
+dnf remove -y 	  docker \
+                  docker-client \
+                  docker-client-latest \
                   docker-common \
+                  docker-latest \
+                  docker-latest-logrotate \
+                  docker-logrotate \
                   docker-selinux \
+                  docker-engine-selinux \
                   docker-engine
 
-yum install -y 	  yum-utils \
-		  device-mapper-persistent-data \
-		  lvm2
+dnf install -y 	  dnf-plugins-core \
 
-yum-config-manager \
-		  --add-repo \
-		  https://download.docker.com/linux/centos/docker-ce.repo
+dnf config-manager \
+    --add-repo \
+    https://download.docker.com/linux/fedora/docker-ce.repo
 
-yum-config-manager --disable docker-ce-edge
+dnf config-manager --set-disabled docker-ce-edge
 
-yum install -y    docker-ce
+dnf install docker-ce -y
 
 # Removing Docker-created bridge and iptables rules
-iptables -t nat -F
-ip link set docker0 down
-ip link delete docker0
+#iptables -t nat -F
+#ip link set docker0 down
+#ip link delete docker0
+
+# Fixing Docker service to leave iptables alone and not masq
+sed -i '/^ExecStart/ s/$/ --iptables=false --ip-masq=false/' /lib/systemd/system/docker.service
 
 # Disabling swap (now and permently)
 echo "Disableling swap..."
 swapoff -a
-sed -i.bak '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+sed -i '/^\/swapfile/ d' /etc/fstab
 
 # We will be using weave net for networking, so we need to pass bridged IPv4 traffic to iptables’ chains
 echo "Setting up network..."
-echo "net.bridge.bridge-nf-call-ip6tables = 1
-net.bridge.bridge-nf-call-iptables = 1" > /etc/sysctl.conf
+echo "net.bridge.bridge-nf-call-ip6tables=1
+net.bridge.bridge-nf-call-iptables=1" > /etc/sysctl.conf
 
 # Add hostnames to hosts file
 cat /tmp/hosts >> /etc/hosts
@@ -92,14 +99,14 @@ ExecStart=/usr/local/bin/kubelet \\
   --authorization-mode=Webhook \\
   --client-ca-file=/var/lib/kubernetes/ca.pem \\
   --cloud-provider= \\
-  --cluster-dns=10.32.0.10 \\
+  --cluster-dns=20.32.0.10 \\
   --cluster-domain=cluster.local \\
   --image-pull-progress-deadline=2m \\
   --kubeconfig=/var/lib/kubelet/kubeconfig \\
-  --pod-cidr=${POD_CIDR} \\
   --register-node=true \\
   --network-plugin=cni \\
   --cni-conf-dir=/etc/cni/net.d \\
+  --cni-bin-dir=/opt/cni/bin \\
   --runtime-request-timeout=15m \\
   --tls-cert-file=/var/lib/kubelet/${HOSTNAME}.pem \\
   --tls-private-key-file=/var/lib/kubelet/${HOSTNAME}-key.pem \\
@@ -119,11 +126,12 @@ cat > kube-proxy.service <<EOF
 [Unit]
 Description=Kubernetes Kube Proxy
 Documentation=https://github.com/kubernetes/kubernetes
+After=network.target
 
 [Service]
 ExecStart=/usr/local/bin/kube-proxy \\
-  --cluster-cidr=10.32.0.0/12 \\
   --kubeconfig=/var/lib/kube-proxy/kubeconfig \\
+  --cluster-cidr=20.0.0.0/16 \\
   --proxy-mode=iptables \\
   --v=2
 Restart=on-failure

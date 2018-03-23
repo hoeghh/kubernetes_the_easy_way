@@ -45,8 +45,8 @@ mv kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/local/bin/
 mkdir -p /var/lib/kubernetes/
 mv /tmp/ca.pem /tmp/ca-key.pem /tmp/kubernetes-key.pem /tmp/kubernetes.pem /tmp/encryption-config.yaml /var/lib/kubernetes/
 
-# When CoroSync and Pagemaker is done, this should be pointing to 192.168.50.20
-INTERNAL_IP=$(cat /tmp/hosts | grep $(hostname -s) | cut -d" " -f1)
+# CoroSync and Pagemaker is done, so this is pointing to 192.168.50.20, the Virtual floating ip
+INTERNAL_IP="192.168.50.20"
 
 # Count the number of master servers
 MASTER_COUNT=$(cat /tmp/hosts | grep "k8s-master-" | wc -l)
@@ -83,7 +83,7 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --kubelet-https=true \\
   --runtime-config=api/all \\
   --service-account-key-file=/var/lib/kubernetes/ca-key.pem \\
-  --service-cluster-ip-range=10.32.0.0/24 \\
+  --service-cluster-ip-range=20.32.0.0/16 \\
   --service-node-port-range=30000-32767 \\
   --tls-ca-file=/var/lib/kubernetes/ca.pem \\
   --tls-cert-file=/var/lib/kubernetes/kubernetes.pem \\
@@ -104,7 +104,8 @@ Documentation=https://github.com/kubernetes/kubernetes
 [Service]
 ExecStart=/usr/local/bin/kube-controller-manager \\
   --address=0.0.0.0 \\
-  --cluster-cidr=10.200.0.0/16 \\
+  --cluster-cidr=20.0.0.0/16 \\
+  --service-cluster-ip-range=20.32.0.0/16 \\
   --cluster-name=kubernetes \\
   --cluster-signing-cert-file=/var/lib/kubernetes/ca.pem \\
   --cluster-signing-key-file=/var/lib/kubernetes/ca-key.pem \\
@@ -112,7 +113,6 @@ ExecStart=/usr/local/bin/kube-controller-manager \\
   --master=http://127.0.0.1:8080 \\
   --root-ca-file=/var/lib/kubernetes/ca.pem \\
   --service-account-private-key-file=/var/lib/kubernetes/ca-key.pem \\
-  --service-cluster-ip-range=10.32.0.0/24 \\
   --v=5
 Restart=on-failure
 RestartSec=5

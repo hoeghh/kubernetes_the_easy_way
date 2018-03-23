@@ -37,11 +37,13 @@ subjects:
     name: kubernetes
 EOF
 
+echo "Deploying WeaveNet..."
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')&env.IPALLOC_RANGE=20.0.0.0/16"
+
+#kubever=$(kubectl version | base64 | tr -d '\n')
+#kubectl apply -f "https://git.io/weave-kube-1.6"&> ../logs/weavenet.log
+#kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$kubever" &> ../logs/weavenet.log
 
 echo "Deploying KubeDNS..."
-kubectl create -f "https://storage.googleapis.com/kubernetes-the-hard-way/kube-dns.yaml" > ../logs/kubedns.log
-
-echo "Deploying WeaveNet..."
-kubever=$(kubectl version | base64 | tr -d '\n')
-kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$kubever" &> ../logs/weavenet.log
+#kubectl create -f "https://storage.googleapis.com/kubernetes-the-hard-way/kube-dns.yaml" > ../logs/kubedns.log
 

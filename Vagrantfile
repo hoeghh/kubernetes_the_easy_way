@@ -43,7 +43,8 @@ ENV['VAGRANT_DEFAULT_PROVIDER'] = 'virtualbox'
 
 Vagrant.configure("2") do |config|
   config.vm.boot_timeout = 500
-  config.vm.box = "bento/centos-7.4"
+  #config.vm.box = "bento/centos-7.4"
+  config.vm.box = "bento/fedora-27"
   config.vm.network "private_network", type: "dhcp"
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
 

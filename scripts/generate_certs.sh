@@ -158,7 +158,7 @@ EOF
 
 HOSTNAMES=$(cat ../output/hosts | cut -d" " -f1 | tr '\n' ',')
 HOSTNAMES=${HOSTNAMES::-1}
-HOSTNAMES=$HOSTNAMES",${KUBERNETES_PUBLIC_ADDRESS},10.32.0.1,127.0.0.1,kubernetes.default"
+HOSTNAMES=$HOSTNAMES",${KUBERNETES_PUBLIC_ADDRESS},20.32.0.1,127.0.0.1,kubernetes.default"
 echo "Adding hosts : "$HOSTNAMES
 
 # Generate the Kubernetes API Server certificate and private key
