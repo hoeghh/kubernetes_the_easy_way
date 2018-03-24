@@ -1,14 +1,5 @@
 # Kubernetes the easy way
 
-```
-OBS: This is work in progress. 
-As of this commit the certificates, a hostfile, the machines are provitioned and ETCD is installed, connected and working. 
-The master server is now installed and kube-apiserver is running and connected to etcd along the controller and scheduler.
-I will keep this section updated as progress is done.
-I have switched to Centos from Ubuntu in the newest commit.
-Worker nodes are now created and connects to the master pool on the floating ip they share.
-```
-
 This repository tries to automate the guide "[Kubernetes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way)" by Kelsey Hightower, using Vagrant and Virtualbox.
 
 ## Prerequisites
@@ -49,23 +40,6 @@ The script set the number of nodes you want and the resources they get. It then 
 Now it calls Vagrant to provition the nodes. While provitioning the nodes, Vagrant will copy scripts and certifiates to each node and execute them. The script can be found under the scripts folder and the certificates under the folder ssl.
 
 ## Connect local kubectl to the new cluster
-### Generate a kubeconfig file suitable for authenticating as the admin user
-### OBS: This is done by install.sh now
-```
-kubectl config set-cluster kubernetes-the-easy-way \
-  --certificate-authority=ssl/ca.pem \
-  --embed-certs=true \
-  --server=https://192.168.50.20:6443
-
-kubectl config set-credentials admin \
-  --client-certificate=ssl/admin.pem \
-  --client-key=ssl/admin-key.pem
-
-kubectl config set-context kubernetes-the-easy-way \
-  --cluster=kubernetes-the-easy-way \
-  --user=admin
-```
-
 ### Set the current context to kubernets-the-easy-way
 ```kubectl config use-context kubernetes-the-easy-way```
 
