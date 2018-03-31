@@ -1,0 +1,12 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nwtool-ingress
+spec:
+  rules:
+  - host: nwtool.example.com
+    http:
+      paths:
+      - backend:
+          serviceName: nw-service
+          servicePort: 80
