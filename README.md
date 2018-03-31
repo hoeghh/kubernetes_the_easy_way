@@ -46,6 +46,15 @@ Now it calls Vagrant to provition the nodes. While provitioning the nodes, Vagra
 ### Test connection and see worker nodes connected
 ```kubectl get nodes```
 
+## SSH into the machines
+In order to SSH into the machines via Vagrant, you first need to source the config file.
+
+```
+source config
+vagrant ssh k8s-master-1
+```
+You can then do a ```sudo su``` to become root.
+
 ## Destroy machines
 If Kubernetes is not your thing after all, or that you for other reasons want to remove the cluster, simply run this script 
 ```sh
