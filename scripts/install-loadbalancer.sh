@@ -28,9 +28,27 @@ sudo chmod u+x /root/traefik
 mv weave /usr/bin/weave
 chmod a+x /usr/bin/weave
 
+echo "Generating kubeconfig file for admin user..."
+kubectl config set-cluster kubernetes-the-easy-way \
+  --certificate-authority=/tmp/ca.pem \
+  --embed-certs=true \
+  --server=https://192.168.50.20:6443
+
+kubectl config set-credentials admin \
+  --client-certificate=/tmp/admin.pem \
+  --client-key=/tmp/admin-key.pem
+
+kubectl config set-context kubernetes-the-easy-way \
+  --cluster=kubernetes-the-easy-way \
+  --user=admin
+
+echo "Set the current context to kubernets-the-easy-way..."
+kubectl config use-context kubernetes-the-easy-way
+
 # Create rbac for traefik
-echo "Creating rbac file for traefik..."
-cat << EOF > /root/traefik.rbac.yaml
+if [ $(hostname) == "k8s-loadbalancer-1" ]; then
+  echo "Creating rbac file for traefik..."
+  cat << EOF > /root/traefik.rbac.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -84,25 +102,9 @@ subjects:
 
 EOF
 
-echo "Generating kubeconfig file for admin user..."
-kubectl config set-cluster kubernetes-the-easy-way \
-  --certificate-authority=/tmp/ca.pem \
-  --embed-certs=true \
-  --server=https://192.168.50.20:6443
-
-kubectl config set-credentials admin \
-  --client-certificate=/tmp/admin.pem \
-  --client-key=/tmp/admin-key.pem
-
-kubectl config set-context kubernetes-the-easy-way \
-  --cluster=kubernetes-the-easy-way \
-  --user=admin 
-
-echo "Set the current context to kubernets-the-easy-way..."
-kubectl config use-context kubernetes-the-easy-way 
-
-echo "Creating RBAC for traefik..."
-kubectl create -f /root/traefik.rbac.yaml
+  echo "Creating RBAC for traefik..."
+  kubectl create -f /root/traefik.rbac.yaml
+fi 
 
 sleep 2
 echo "Getting token and ca.crt for Traefik from api-server..."
