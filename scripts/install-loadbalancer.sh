@@ -3,12 +3,20 @@ echo "Installing loadbalancer..."
 echo "Downloading binaries..."
 wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kubectl &
 wget -q --timestamping https://github.com/containous/traefik/releases/download/v1.5.3/traefik_linux-amd64 &
+wget -q --timestamping git.io/weave &
 
 mkdir -p /root/ssl
 
 echo "Adding hosts to /etc/hosts file"
 cat /tmp/hosts >> /etc/hosts
 
+# Installing Docker on Load balancer
+dnf install dnf-plugins-core -y
+dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+dnf config-manager --set-disabled docker-ce-edge
+dnf install docker-ce -y
+
+# Wait for downloads to complete
 wait 
 echo "Done downloading binaries..."
 
@@ -17,7 +25,10 @@ chmod +x kubectl
 mv kubectl /usr/bin/
 sudo mv traefik_linux-amd64 /root/traefik
 sudo chmod u+x /root/traefik
+mv weave /usr/bin/weave
+chmod a+x /usr/bin/weave
 
+# Create rbac for traefik
 echo "Creating rbac file for traefik..."
 cat << EOF > /root/traefik.rbac.yaml
 apiVersion: v1
@@ -141,6 +152,14 @@ EOF'
 sudo systemctl daemon-reload
 sudo systemctl enable traefik
 sudo service traefik start
+
+sudo systemctl enable docker
+sudo service docker start
+
+# Install weavenet
+WORKER_IPS=$(cat /etc/hosts | grep worker | cut -d " " -f1 | tr '\n' ' ')
+/usr/bin/weave launch --ipalloc-init observer $WORKER_IPS --ipalloc-range 20.0.0.0/16
+/usr/bin/weave expose
 
 echo "Cleaning up..."
 rm -f /tmp/admin-key.pem

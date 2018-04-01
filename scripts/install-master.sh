@@ -145,3 +145,11 @@ systemctl daemon-reload
 systemctl enable kube-apiserver kube-controller-manager kube-scheduler
 systemctl start kube-apiserver kube-controller-manager kube-scheduler
 
+# This should be run once only.
+# It needs to be run before loadbalancers get ready
+# Its a hack...
+sleep 10
+if [ $(hostname) == "k8s-master-1" ]; then
+  echo "Deploying WeaveNet..."
+  /usr/local/bin/kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(/usr/local/bin/kubectl version | base64 | tr -d '\n')&env.IPALLOC_RANGE=20.0.0.0/16"
+fi
