@@ -148,8 +148,18 @@ systemctl start kube-apiserver kube-controller-manager kube-scheduler
 # This should be run once only.
 # It needs to be run before loadbalancers get ready
 # Its a hack...
-sleep 15
 if [ $(hostname) == "k8s-master-1" ]; then
+  # Wait for the api-server to be ready
+  RESP=$(curl -s -o /dev/null -I -w "%{http_code}" http://localhost:8080/)
+  while [ $RESP != "200" ]; do
+    echo "$(date) The response is $RESP"
+    sleep 1
+    RESP=$(curl -s -o /dev/null -I -w "%{http_code}" http://localhost:8080/)
+  done
+
+  echo "$(date) Api server is ready..."
+
   echo "Deploying WeaveNet..."
-  /usr/local/bin/kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(/usr/local/bin/kubectl version | base64 | tr -d '\n')&env.IPALLOC_RANGE=20.0.0.0/16"
+  sleep 10
+  /usr/local/bin/kubectl create -f "https://cloud.weave.works/k8s/net?k8s-version=$(/usr/local/bin/kubectl version | base64 | tr -d '\n')&env.IPALLOC_RANGE=20.0.0.0/16"
 fi
