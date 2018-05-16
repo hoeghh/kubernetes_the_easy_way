@@ -11,3 +11,8 @@ export LOADBALANCER_COUNT=2
 export LOADBALANCER_CPU=1
 export LOADBALANCER_MEM=512
 
+export EXTRA_HOSTS="
+# Add extra hosts entries to each node in the format of 
+192.168.1.148 nfs-server.example.com
+"
+

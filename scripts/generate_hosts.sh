@@ -35,4 +35,5 @@ echo "192.168.50."$(($counter + 4))" k8s-loadbalancer-$counter"
 ((counter++))
 done
 
-
+# Adding EXTRA_HOSTS as defined in config
+echo $EXTRA_HOSTS
