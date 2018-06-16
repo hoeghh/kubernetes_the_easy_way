@@ -11,8 +11,11 @@ export LOADBALANCER_COUNT=2
 export LOADBALANCER_CPU=1
 export LOADBALANCER_MEM=512
 
-export EXTRA_HOSTS="
-# Add extra hosts entries to each node in the format of 
-192.168.1.148 nfs-server.example.com
+export EXTRA_HOSTS="\n
+# Add extra hosts entries to each node in the format of \n 
+10.0.0.214 nfs-server.example.com                       \n
+192.168.50.4 confluence.example.com                     \n
+192.168.50.4 jira.example.com                           \n
+
 "
 
