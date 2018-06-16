@@ -58,7 +58,6 @@ sudo mkdir -p         \
 # Download binaries
 echo "Downloading files..."
 wget -q --timestamping  https://github.com/containernetworking/plugins/releases/download/v0.6.0/cni-plugins-amd64-v0.6.0.tgz
-#wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kubectl &
 wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kube-proxy & 
 wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kubelet &
 
@@ -68,8 +67,8 @@ wait
 tar -xvf cni-plugins-amd64-v0.6.0.tgz -C /opt/cni/bin/
 
 # Install the worker binaires
-chmod +x kubectl kube-proxy kubelet
-mv kubectl kube-proxy kubelet /usr/local/bin/
+chmod +x kube-proxy kubelet
+mv kube-proxy kubelet /usr/local/bin/
 
 
 # Retrieve the Pod CIDR range for the current instance
