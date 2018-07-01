@@ -2,7 +2,7 @@ echo "Installing loadbalancer..."
 
 echo "Downloading binaries..."
 wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kubectl &
-wget -q --timestamping https://github.com/containous/traefik/releases/download/v1.5.3/traefik_linux-amd64 &
+wget -q --timestamping https://github.com/containous/traefik/releases/download/v1.6.4/traefik_linux-amd64 &
 wget -q --timestamping git.io/weave &
 
 mkdir -p /root/ssl
