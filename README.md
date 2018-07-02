@@ -56,3 +56,6 @@ If Kubernetes is not your thing after all, or that you for other reasons want to
 ```sh
 ./destroy.sh
 ```
+
+## Important
+Remember to run the ```destroy.sh``` script before running the ```install.sh``` script again. 
