@@ -51,6 +51,15 @@ Now it calls Vagrant to provition the nodes. While provitioning the nodes, Vagra
 ```kubectl get nodes```
 
 
+## SSH into machines
+Because we trick Vagrant into being dynamic in regards to number of machines, we need to set our variables before we can use Vagrant commands.
+So in order to use Vagrant commands, after the ```install.sh``` script has finished, run this
+
+```
+source config
+vagrant ssh k8s-worker-1
+```
+
 ## Destroy machines
 If Kubernetes is not your thing after all, or that you for other reasons want to remove the cluster, simply run this script 
 ```sh
