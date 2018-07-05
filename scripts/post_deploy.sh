@@ -37,5 +37,5 @@ subjects:
     name: kubernetes
 EOF
 
-echo "Deploying CoreDNS..."
-kubectl apply -f kubedns.yaml > ../logs/coredns.log
+echo "Deploying KubeDNS..."
+kubectl apply -f kubedns.yaml > ../logs/kubedns.yaml

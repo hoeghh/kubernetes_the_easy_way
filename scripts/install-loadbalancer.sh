@@ -160,7 +160,7 @@ sudo service docker start
 
 # Install weavenet
 WORKER_IPS=$(cat /etc/hosts | grep worker | cut -d " " -f1 | tr '\n' ' ')
-/usr/bin/weave launch --ipalloc-init observer $WORKER_IPS --ipalloc-range 20.0.0.0/16
+/usr/bin/weave launch --ipalloc-init observer $WORKER_IPS --ipalloc-range 10.200.0.0/16
 /usr/bin/weave expose
 
 echo "Cleaning up..."
