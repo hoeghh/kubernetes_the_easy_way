@@ -38,4 +38,4 @@ subjects:
 EOF
 
 echo "Deploying KubeDNS..."
-kubectl apply -f kubedns.yaml > ../logs/kubedns.yaml
+kubectl apply -f kubedns.yaml > ../logs/kubedns.log
