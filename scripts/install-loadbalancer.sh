@@ -169,3 +169,23 @@ rm -f /tmp/admin.pem
 rm -f /tmp/ca.pem
 sudo rm -rf /root/.kube
 sudo rm -f /usr/bin/kubectl
+
+echo "Making Weavenet start on boot"
+sudo bash -c 'cat << EOF > /etc/systemd/system/weavenet.service
+[Unit]
+Description=Weavenet
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStart=/usr/bin/weave expose
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF'
+
+sudo systemctl enable weavenet
+sudo service weavenet start
+
