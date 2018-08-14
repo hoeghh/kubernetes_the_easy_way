@@ -14,8 +14,8 @@ echo "Generating kubeconfig files for workers and kubeproxy..."
 scripts/generate_kube_config.sh &> logs/kube-configs.log
 
 echo "Running Vagrant, this will take a while...
-Follow progress in logs/vagrant-provition.log"
-vagrant up &> logs/vagrant-provition.log
+Follow progress in logs/vagrant-provisioning.log"
+vagrant up &> logs/vagrant-provisioning.log
 
 
 echo "Do you want me to configure kubectl for you? [y/n], followed by [ENTER]:"
@@ -38,7 +38,7 @@ if [ "$CONFIGURE_KUBECTL" = "y" ]; then
     --cluster=kubernetes-the-easy-way \
     --user=admin >> logs/kubedeploy.log
 
-  echo "Set the current context to kubernets-the-easy-way..."
+  echo "Set the current context to kubernetes-the-easy-way..."
   kubectl config use-context kubernetes-the-easy-way >> logs/kubedeploy.log
 
   # Running post install deploy script
