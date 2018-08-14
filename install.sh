@@ -38,7 +38,7 @@ if [ "$CONFIGURE_KUBECTL" = "y" ]; then
     --cluster=kubernetes-the-easy-way \
     --user=admin >> logs/kubedeploy.log
 
-  echo "Set the current context to kubernets-the-easy-way..."
+  echo "Set the current context to kubernetes-the-easy-way..."
   kubectl config use-context kubernetes-the-easy-way >> logs/kubedeploy.log
 
   # Running post install deploy script
