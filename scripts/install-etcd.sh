@@ -5,12 +5,12 @@ echo "Installing etcd..."
 cat /tmp/hosts >> /etc/hosts
 
 wget -q --timestamping \
-  "https://github.com/coreos/etcd/releases/download/v3.2.11/etcd-v3.2.11-linux-amd64.tar.gz"
+  "https://github.com/coreos/etcd/releases/download/v3.3.9/etcd-v3.3.9-linux-amd64.tar.gz"
 
-tar -xvf etcd-v3.2.11-linux-amd64.tar.gz
+tar -xvf etcd-v3.3.9-linux-amd64.tar.gz
 
-mv etcd-v3.2.11-linux-amd64/etcd* /usr/local/bin/
-rm -f etcd-v3.2.11-linux-amd64.tar.gz
+mv etcd-v3.3.9-linux-amd64/etcd* /usr/local/bin/
+rm -f etcd-v3.3.9-linux-amd64.tar.gz
 
 mkdir -p /etc/etcd /var/lib/etcd
 
