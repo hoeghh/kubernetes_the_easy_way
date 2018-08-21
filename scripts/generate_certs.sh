@@ -1,3 +1,6 @@
+
+source ../cert_config.env
+
 # Create the CA configuration file
 cat > ca-config.json <<EOF
 {
@@ -18,18 +21,18 @@ EOF
 # Create the CA certificate signing request
 cat > ca-csr.json <<EOF
 {
-  "CN": "Kubernetes",
+  "CN": "$CA_CERT_CN_CommonName",
   "key": {
     "algo": "rsa",
     "size": 2048
   },
   "names": [
     {
-      "C": "US",
-      "L": "Portland",
-      "O": "Kubernetes",
-      "OU": "CA",
-      "ST": "Oregon"
+      "C": "$CA_CERT_C_CountryName",
+      "L": "$CA_CERT_L_Locality",
+      "O": "$CA_CERT_O_Organization",
+      "OU": "$CA_CERT_OU_OrganizationalUnit",
+      "ST": "$CA_CERT_ST_STATE"
     }
   ]
 }
@@ -41,18 +44,18 @@ cfssl gencert -initca ca-csr.json | cfssljson -bare ca
 # Create the admin client certificate signing request
 cat > admin-csr.json <<EOF
 {
-  "CN": "admin",
+  "CN": "$ADMIN_CERT_CN_CommonName",
   "key": {
     "algo": "rsa",
     "size": 2048
   },
   "names": [
     {
-      "C": "US",
-      "L": "Portland",
-      "O": "system:masters",
-      "OU": "Kubernetes The Hard Way",
-      "ST": "Oregon"
+      "C": "$ADMIN_CERT_C_CountryName",
+      "L": "$ADMIN_CERT_L_Locality",
+      "O": "$ADMIN_CERT_O_Organization",
+      "OU": "$ADMIN_CERT_OU_OrganizationalUnit",
+      "ST": "$ADMIN_CERT_ST_STATE"
     }
   ]
 }
@@ -74,18 +77,18 @@ do
   instance="k8s-worker-$counter"
   cat > ${instance}-csr.json <<EOF
 {
-  "CN": "system:node:${instance}",
+  "CN": "$WORKERS_CERT_CN_CommonName:${instance}",
   "key": {
     "algo": "rsa",
     "size": 2048
   },
   "names": [
     {
-      "C": "US",
-      "L": "Portland",
-      "O": "system:nodes",
-      "OU": "Kubernetes The Hard Way",
-      "ST": "Oregon"
+      "C": "$WORKERS_CERT_C_CountryName",
+      "L": "$WORKERS_CERT_L_Locality",
+      "O": "$WORKERS_CERT_O_Organization",
+      "OU": "$WORKERS_CERT_OU_OrganizationalUnit",
+      "ST": "$WORKERS_CERT_ST_STATE"
     }
   ]
 }
@@ -107,18 +110,18 @@ done
 # Create the kube-proxy client certificate signing request
 cat > kube-proxy-csr.json <<EOF
 {
-  "CN": "system:kube-proxy",
+  "CN": "$KUBEPROXY_CERT_CN_CommonName",
   "key": {
     "algo": "rsa",
     "size": 2048
   },
   "names": [
     {
-      "C": "US",
-      "L": "Portland",
-      "O": "system:node-proxier",
-      "OU": "Kubernetes The Hard Way",
-      "ST": "Oregon"
+      "C": "$KUBEPROXY_CERT_C_CountryName",
+      "L": "$KUBEPROXY_CERT_L_Locality",
+      "O": "KUBEPROXY_CERT_O_Organization",
+      "OU": "$KUBEPROXY_CERT_OU_OrganizationalUnit",
+      "ST": "$KUBEPROXY_CERT_ST_STATE"
     }
   ]
 }
@@ -139,18 +142,18 @@ KUBERNETES_PUBLIC_ADDRESS="192.168.50.20"
 # Create the Kubernetes API Server certificate signing request
 cat > kubernetes-csr.json <<EOF
 {
-  "CN": "kubernetes",
+  "CN": "$APISERVER_CERT_CN_CommonName",
   "key": {
     "algo": "rsa",
     "size": 2048
   },
   "names": [
     {
-      "C": "US",
-      "L": "Portland",
-      "O": "Kubernetes",
-      "OU": "Kubernetes The Hard Way",
-      "ST": "Oregon"
+      "C": "$APISERVER_CERT_C_CountryName",
+      "L": "$APISERVER_CERT_L_Locality",
+      "O": "$APISERVER_CERT_O_Organization",
+      "OU": "$APISERVER_CERT_OU_OrganizationalUnit",
+      "ST": "$APISERVER_CERT_ST_STATE"
     }
   ]
 }
@@ -158,7 +161,7 @@ EOF
 
 HOSTNAMES=$(cat ../output/hosts | cut -d" " -f1 | tr '\n' ',')
 HOSTNAMES=${HOSTNAMES::-1}
-HOSTNAMES=$HOSTNAMES",${KUBERNETES_PUBLIC_ADDRESS},10.32.0.1,127.0.0.1,kubernetes.default"
+HOSTNAMES=$HOSTNAMES",${KUBERNETES_PUBLIC_ADDRESS},10.32.0.1,127.0.0.1,kubernetes.default,k8s-master"
 echo "Adding hosts : "$HOSTNAMES
 
 # Generate the Kubernetes API Server certificate and private key
