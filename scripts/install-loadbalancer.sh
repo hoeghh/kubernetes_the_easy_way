@@ -131,7 +131,7 @@ defaultEntryPoints = ["http", "https"]
 address = ":8080"
 ReadOnly = true
 [kubernetes]
-endpoint = "https://192.168.50.20:6443"
+endpoint = "https://k8s-master:6443"
 token="$traefik_token"
 certAuthFilePath = "/root/ssl/ca.crt"
 EOF
