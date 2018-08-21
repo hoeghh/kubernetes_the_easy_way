@@ -58,8 +58,8 @@ sudo mkdir -p         \
 # Download binaries
 echo "Downloading files..."
 wget -q --timestamping  https://github.com/containernetworking/plugins/releases/download/v0.7.1/cni-plugins-amd64-v0.7.1.tgz
-wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.9/bin/linux/amd64/kube-proxy & 
-wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.9.9/bin/linux/amd64/kubelet &
+wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.10.7/bin/linux/amd64/kube-proxy & 
+wget -q --timestamping  https://storage.googleapis.com/kubernetes-release/release/v1.10.7/bin/linux/amd64/kubelet &
 
 # Wait for downloads to finish
 wait
