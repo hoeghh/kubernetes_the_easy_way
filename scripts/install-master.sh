@@ -7,7 +7,6 @@ yum install -y conntrack-tools.x86_64
 cat /tmp/hosts >> /etc/hosts
 
 # Prepare variables for etcd
-ETCD_NAME=$(hostname -s)
 ETCD_COUNT=$(cat /tmp/hosts | grep etcd | wc -l)
 
 # Generating ETCD list for Api-Server service
